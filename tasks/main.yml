@@ -15,8 +15,8 @@
     volumes:
       - "{{ zookeeper_volume_name }}:/tmp/zookeeper"
     env:
-      MYID: "{{ groups.zookeeper | natural_index_of(inventory_hostname) }}"
-      SERVERS: "{{ groups.zookeeper | join(',') }}"
+      MYID: "{{ play_hosts | natural_index_of(inventory_hostname) }}"
+      SERVERS: "{{ play_hosts | join(',') }}"
 
 - name: Wait for ZooKeeper to come up
   wait_for: port="{{ client_port }}" delay=0 timeout=60
