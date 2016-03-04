@@ -1,0 +1,22 @@
+---
+- name: Create a Docker volume for the ZooKeeper data
+  shell: "docker volume create --name {{ zookeeper_volume_name }}"
+  become: yes
+
+- name: Run the ZooKeeper container
+  docker:
+    name: zookeeper
+    image: "{{ zookeeper_docker_image }}"
+    net: host
+    detach: yes
+    state: reloaded
+    restart_policy: always
+    restart_policy_retry: 128
+    volumes:
+      - "{{ zookeeper_volume_name }}:/tmp/zookeeper"
+    env:
+      MYID: "{{ groups.zookeeper | natural_index_of(inventory_hostname) }}"
+      SERVERS: "{{ groups.zookeeper | join(',') }}"
+
+- name: Wait for ZooKeeper to come up
+  wait_for: port="{{ client_port }}" delay=0 timeout=60
