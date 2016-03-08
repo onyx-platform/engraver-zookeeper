@@ -5,7 +5,7 @@
 
 - name: Run the ZooKeeper container
   docker:
-    name: zookeeper
+    name: "{{ container_name }}"
     image: "{{ zookeeper_docker_image }}"
     net: host
     detach: yes
