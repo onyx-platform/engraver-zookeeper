@@ -5,9 +5,13 @@ zookeeper_url: http://www.us.apache.org/dist/zookeeper/zookeeper-{{zookeeper_ver
 
 apt_cache_timeout: 3600
 
-client_port: 2181
-follower_port: 2888
-leader_port: 3888
+client_container_port: 2181
+follower_container_port: 2888
+leader_container_port: 3888
+
+client_host_port: 2181
+follower_host_port: 2888
+leader_host_port: 3888
 
 init_limit: 5
 sync_limit: 2
@@ -22,3 +26,8 @@ zookeeper_data_dir: /data/zookeeper
 
 zookeeper_docker_image: mesoscloud/zookeeper:3.4.6-ubuntu-14.04
 zookeeper_volume_name: zookeeper
+
+service_ports:
+  - "{{ client_host_port }}"
+  - "{{ follower_host_port }}"
+  - "{{ leader_host_port }}"
