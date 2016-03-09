@@ -17,12 +17,11 @@ init_limit: 5
 sync_limit: 2
 tick_time: 2000
 zoo_id: 1
-zookeeper_data_dir: /var/lib/zookeeper
+zookeeper_data_dir: /data/zookeeper
 zookeeper_log_dir: /var/log/zookeeper
 zookeeper_dir: /opt/zookeeper-{{zookeeper_version}}
 
 refresh_zookeeper: no
-zookeeper_data_dir: /data/zookeeper
 
 zookeeper_docker_image: mesoscloud/zookeeper:3.4.6-ubuntu-14.04
 zookeeper_volume_name: zookeeper
