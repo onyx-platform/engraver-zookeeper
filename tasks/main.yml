@@ -5,7 +5,7 @@
 
 - name: Run the ZooKeeper container
   docker:
-    name: "{{ container_name }}"
+    name: "{{ zookeeper_container_name }}"
     image: "{{ zookeeper_docker_image }}"
     detach: yes
     state: reloaded
