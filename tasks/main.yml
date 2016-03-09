@@ -28,7 +28,7 @@
 - name: Wait for ZooKeeper server to come up
   wait_for:
     host: "{{ inventory_hostname }}"
-    port: "{{ client_host_port }}"
+    port: "{{ zookeeper_client_host_port }}"
     delay: 0
     timeout: 60
   delegate_to: "{{ item }}"
