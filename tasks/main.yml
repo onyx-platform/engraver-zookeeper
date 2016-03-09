@@ -13,7 +13,7 @@
     restart_policy: always
     restart_policy_retry: 128
     volumes:
-      - "{{ zookeeper_volume_name }}:/tmp/zookeeper"
+      - "{{ zookeeper_volume_name }}:{{ zookeeper_data_dir }}"
     env:
       MYID: "{{ play_hosts | natural_index_of(inventory_hostname) }}"
       SERVERS: "{{ play_hosts | join(',') }}"
