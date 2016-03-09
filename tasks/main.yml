@@ -7,16 +7,26 @@
   docker:
     name: "{{ container_name }}"
     image: "{{ zookeeper_docker_image }}"
-    net: host
     detach: yes
     state: reloaded
     restart_policy: always
     restart_policy_retry: 128
     volumes:
       - "{{ zookeeper_volume_name }}:{{ zookeeper_data_dir }}"
+    ports:
+      - "{{ client_host_port }}:{{ client_container_port }}"
+      - "{{ follower_host_port }}:{{ follower_container_port }}"
+      - "{{ leader_host_port }}:{{ leader_container_port }}"
     env:
       MYID: "{{ play_hosts | natural_index_of(inventory_hostname) }}"
       SERVERS: "{{ play_hosts | join(',') }}"
 
-- name: Wait for ZooKeeper to come up
-  wait_for: port="{{ client_port }}" delay=0 timeout=60
+- name: Wait for ZooKeeper server to come up
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: "{{ client_host_port }}"
+    delay: 0
+    timeout: 60
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ inventory_hostname }}"
