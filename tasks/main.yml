@@ -17,6 +17,10 @@
       - "{{ client_host_port }}:{{ client_container_port }}"
       - "{{ follower_host_port }}:{{ follower_container_port }}"
       - "{{ leader_host_port }}:{{ leader_container_port }}"
+    expose:
+      - "{{ client_container_port }}"
+      - "{{ follower_container_port }}"
+      - "{{ leader_container_port }}"
     env:
       MYID: "{{ play_hosts | natural_index_of(inventory_hostname) }}"
       SERVERS: "{{ play_hosts | join(',') }}"
