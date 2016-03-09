@@ -31,12 +31,12 @@ service_security_rules:
   - proto: tcp
     from_port: "{{ client_host_port }}"
     to_port: "{{ client_host_port }}"
-    cidr_ip: "0.0.0.0/0"
+    cidr_ip: "{{ onyx_subnet }}"
   - proto: tcp
     from_port: "{{ follower_host_port }}"
     to_port: "{{ follower_host_port }}"
-    cidr_ip: "0.0.0.0/0"
+    cidr_ip: "{{ onyx_subnet }}"
   - proto: tcp
     from_port: "{{ leader_host_port }}"
     to_port: "{{ leader_host_port }}"
-    cidr_ip: "0.0.0.0/0"
+    cidr_ip: "{{ onyx_subnet }}"
