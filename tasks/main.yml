@@ -76,3 +76,7 @@
   delegate_to: "{{ item }}"
   with_items:
     - "{{ inventory_hostname }}"
+
+- name: Export a ZooKeeper connection string for downstream use
+  set_fact:
+    zk_conn_str: "{{ (zk_addresses | join(':' ~ zookeeper_client_host_port ~ ',')) ~ ':' ~ zookeeper_client_host_port }}"
