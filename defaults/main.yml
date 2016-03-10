@@ -17,7 +17,7 @@ init_limit: 5
 sync_limit: 2
 tick_time: 2000
 zoo_id: 1
-zookeeper_data_dir: /data/zookeeper
+zookeeper_data_dir: /tmp/zookeeper
 zookeeper_log_dir: /var/log/zookeeper
 zookeeper_dir: /opt/zookeeper-{{zookeeper_version}}
 
