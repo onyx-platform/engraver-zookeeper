@@ -54,18 +54,6 @@
     group: "{{ remote_user }}"
     mode: 0555
 
-- name: Set my ZooKeeper server ID
-  set_fact:
-    my_id: "{{ zk_addresses | natural_index_of(private_ip) }}"
-
-- name: Move the myid file to the host
-  template:
-    src: templates/myid.j2
-    dest: "{{ zookeeper_host_config_dir }}/myid"
-    owner: "{{ remote_user }}"
-    group: "{{ remote_user }}"
-    mode: 0555
-
 - name: Run the ZooKeeper container
   docker:
     name: "{{ zookeeper_container_name }}"
@@ -74,17 +62,10 @@
     state: reloaded
     restart_policy: always
     restart_policy_retry: 128
+    net: host
     volumes:
       - "{{ zookeeper_volume_name }}:{{ zookeeper_data_dir }}"
       - "{{ zookeeper_host_config_dir }}:{{ zookeeper_container_config_dir }}"
-    ports:
-      - "{{ zookeeper_client_host_port }}:{{ zookeeper_client_container_port }}"
-      - "{{ zookeeper_follower_host_port }}:{{ zookeeper_follower_container_port }}"
-      - "{{ zookeeper_leader_host_port }}:{{ zookeeper_leader_container_port }}"
-    expose:
-      - "{{ zookeeper_client_container_port }}"
-      - "{{ zookeeper_follower_container_port }}"
-      - "{{ zookeeper_leader_container_port }}"
 
 - name: Wait for ZooKeeper server to come up
   wait_for:
