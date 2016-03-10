@@ -3,6 +3,23 @@
   shell: "docker volume create --name {{ zookeeper_volume_name }}"
   become: yes
 
+- name: Find all the ZooKeeper machines
+  register: zk_machines
+  ec2_remote_facts:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ aws_region }}"
+    filters:
+      instance-state-name: running
+      dns_name: "{{ item }}"
+  with_items: "{{ groups['zookeeper'] }}"
+  run_once: yes
+  delegate_to: localhost
+
+- name: Bind the ZooKeeper private IPs
+  set_fact:
+    zk_addresses: "{{ zk_machines['results'] | map(attribute='instances') | list | private_addresses }}"
+
 - name: Run the ZooKeeper container
   docker:
     name: "{{ zookeeper_container_name }}"
@@ -22,8 +39,8 @@
       - "{{ zookeeper_follower_container_port }}"
       - "{{ zookeeper_leader_container_port }}"
     env:
-      MYID: "{{ play_hosts | natural_index_of(inventory_hostname) }}"
-      SERVERS: "{{ play_hosts | join(',') }}"
+      MYID: "{{ groups['zookeeper'] | natural_index_of(inventory_hostname) }}"
+      SERVERS: "{{ zk_addresses | join(',') }}"
 
 - name: Wait for ZooKeeper server to come up
   wait_for:
