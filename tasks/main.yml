@@ -3,6 +3,16 @@
   shell: "docker volume create --name {{ zookeeper_volume_name }}"
   become: yes
 
+- name: Create the directory for the ZooKeeper config files
+  file:
+    path: "{{ zookeeper_host_config_dir }}"
+    state: directory
+    mode: 0755
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    recurse: yes
+  become: yes
+
 - name: Find all the ZooKeeper machines
   register: zk_machines
   ec2_remote_facts:
@@ -20,6 +30,30 @@
   set_fact:
     zk_addresses: "{{ zk_machines['results'] | map(attribute='instances') | list | private_addresses }}"
 
+- name: Move the configuration.xsl file to the host
+  template:
+    src: templates/configuration.xsl
+    dest: "{{ zookeeper_host_config_dir }}/configuration.xsl"
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
+- name: Move the log4j file to the host
+  template:
+    src: templates/log4j.properties
+    dest: "{{ zookeeper_host_config_dir }}/log4j.properties"
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
+- name: Move the zoo.cfg file to the host
+  template:
+    src: templates/zoo.cfg.j2
+    dest: "{{ zookeeper_host_config_dir }}/zoo.cfg"
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
 - name: Run the ZooKeeper container
   docker:
     name: "{{ zookeeper_container_name }}"
@@ -30,6 +64,7 @@
     restart_policy_retry: 128
     volumes:
       - "{{ zookeeper_volume_name }}:{{ zookeeper_data_dir }}"
+      - "{{ zookeeper_host_config_dir }}:{{ zookeeper_container_config_dir }}"
     ports:
       - "{{ zookeeper_client_host_port }}:{{ zookeeper_client_container_port }}"
       - "{{ zookeeper_follower_host_port }}:{{ zookeeper_follower_container_port }}"
@@ -38,9 +73,6 @@
       - "{{ zookeeper_client_container_port }}"
       - "{{ zookeeper_follower_container_port }}"
       - "{{ zookeeper_leader_container_port }}"
-    env:
-      MYID: "{{ groups['zookeeper'] | natural_index_of(inventory_hostname) }}"
-      SERVERS: "{{ zk_addresses | join(',') }}"
 
 - name: Wait for ZooKeeper server to come up
   wait_for:

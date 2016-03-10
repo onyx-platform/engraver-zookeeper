@@ -1,0 +1,9 @@
+tickTime={{ zookeeper_tick_time }}
+initLimit={{ zookeeper_init_limit }}
+syncLimit={{ zookeeper_sync_limit }}
+dataDir={{ zookeeper_data_dir }}
+clientPort={{ zookeeper_client_container_port }}
+
+{% for ip in zk_addresses %}
+server.{{ loop.index }}={{ ip }}:{{ zookeeper_follower_container_port }}:{{ zookeeper_leader_container_port }}
+{% endfor %}
