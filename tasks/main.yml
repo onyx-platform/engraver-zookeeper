@@ -30,6 +30,18 @@
   set_fact:
     zk_addresses: "{{ zk_machines['results'] | map(attribute='instances') | list | private_addresses }}"
 
+- name: Set my ZooKeeper server ID
+  set_fact:
+    my_id: "{{ zk_addresses | natural_index_of(private_ip) }}"
+
+- name: Move the myid file to the host
+  template:
+    src: templates/myid.j2
+    dest: "{{ zookeeper_host_config_dir }}/myid"
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
 - name: Move the configuration.xsl file to the host
   template:
     src: templates/configuration.xsl
