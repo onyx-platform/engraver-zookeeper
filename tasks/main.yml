@@ -92,4 +92,4 @@
 
 - name: Export a ZooKeeper connection string for downstream use
   set_fact:
-    zk_conn_str: "{{ (zk_addresses | join(':' ~ zookeeper_client_host_port ~ ',')) ~ ':' ~ zookeeper_client_host_port }}"
+    zk_conn_str: "{{ (zk_addresses | join(':' ~ zookeeper_client_host_port ~ ',')) }}"
