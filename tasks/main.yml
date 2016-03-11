@@ -77,6 +77,7 @@
     net: host
     volumes:
       - "{{ zookeeper_volume_name }}:{{ zookeeper_data_dir }}"
+      - "{{ zookeeper_host_config_dir }}/myid:{{ zookeeper_data_dir }}/myid"
       - "{{ zookeeper_host_config_dir }}:{{ zookeeper_container_config_dir }}"
 
 - name: Wait for ZooKeeper server to come up
